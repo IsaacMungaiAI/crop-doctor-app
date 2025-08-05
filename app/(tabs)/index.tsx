@@ -1,75 +1,127 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { useRouter } from 'expo-router';
 
 export default function HomeScreen() {
+  const router = useRouter();
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <ScrollView style={styles.container}>
+      <Text style={styles.title}>CropDoctor</Text>
+      <Text style={styles.subtitle}>Empowering Farmers with AI for Sustainable Farming</Text>
+
+      <View style={styles.cardContainer}>
+        <TouchableOpacity
+          style={styles.card}
+          onPress={() => router.push('/(tabs)/Chat')}
+        >
+          <Image source={require('@/assets/images/chat.png')} style={styles.icon} />
+          <Text style={styles.cardText}>Chat With AI</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.card}
+          onPress={() => {
+            // You can add scan navigation later
+            alert('Scanning feature coming soon');
+          }}
+        >
+          <Image source={require('@/assets/images/scan.png')} style={styles.icon} />
+          <Text style={styles.cardText}>Scan Plant</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.card}
+          onPress={() => router.push('/(tabs)/Profile')}
+        >
+          <Image source={require('@/assets/images/profile.png')} style={styles.icon} />
+          <Text style={styles.cardText}>Your Profile</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.tipSection}>
+        <Text style={styles.tipTitle}>🌿 Daily Crop Health Tip</Text>
+        <Text style={styles.tipText}>Water early in the morning to reduce fungal infections on leaves.</Text>
+      </View>
+      <View style={styles.tipSection}>
+        <Text style={styles.tipTitle}>🌿 Daily Crop Health Tip</Text>
+        <Text style={styles.tipText}>Water early in the morning to reduce fungal infections on leaves.</Text>
+      </View>
+      <View style={styles.tipSection}>
+        <Text style={styles.tipTitle}>🌿 Daily Crop Health Tip</Text>
+        <Text style={styles.tipText}>Water early in the morning to reduce fungal infections on leaves.</Text>
+      </View>
+      <View style={styles.tipSection}>
+        <Text style={styles.tipTitle}>🌿 Daily Crop Health Tip</Text>
+        <Text style={styles.tipText}>Water early in the morning to reduce fungal infections on leaves.</Text>
+      </View>
+      <View style={styles.tipSection}>
+        <Text style={styles.tipTitle}>🌿 Daily Crop Health Tip</Text>
+        <Text style={styles.tipText}>Water early in the morning to reduce fungal infections on leaves.</Text>
+      </View>
+    </ScrollView>
   );
 }
 
+
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    backgroundColor: '#F7F8FA',
+    padding: 20,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: '600',
+    marginTop: 20,
+    marginBottom: 5,
+    color: '#1A1A1A',
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#555',
+    marginBottom: 30,
+  },
+  cardContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  card: {
+    width: '48%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 20,
     alignItems: 'center',
-    gap: 8,
+    marginBottom: 20,
+    elevation: 2,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  icon: {
+    width: 40,
+    height: 40,
+    marginBottom: 10,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  cardText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#333',
+  },
+  tipSection: {
+    backgroundColor: '#E5F6DA',
+    padding: 15,
+    borderRadius: 10,
+    marginTop: 10,
+  },
+  tipTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#3C763D',
+    marginBottom: 5,
+  },
+  tipText: {
+    fontSize: 14,
+    color: '#3C763D',
   },
 });
+
