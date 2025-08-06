@@ -1,11 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useClerk } from '@clerk/clerk-expo';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
+import { SignOutButton } from '@/components/signOutButton';
 //import { supabase } from '../services/supabase'; // assuming supabase setup
 
 const ProfileScreen = () => {
   const router = useRouter();
+  const { signOut } = useClerk();
 
   // You’d normally get this from Supabase auth session
   const user = {
@@ -15,8 +19,14 @@ const ProfileScreen = () => {
   };
 
   const handleSignOut = async () => {
-    //await supabase.auth.signOut();
-    // Navigate to login screen or use BetterAuth logic
+    try {
+      await signOut();
+      setTimeout(() => {
+        router.replace('/(auth)/login');
+      }, 500); // give Clerk a moment to update its internal state
+    } catch (error) {
+      console.error("Sign out error", error);
+    }
   };
 
   return (
@@ -27,12 +37,12 @@ const ProfileScreen = () => {
         <Text style={styles.name}>{user.name}</Text>
         <Text style={styles.email}>{user.email}</Text>
 
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText} onPress={() => router.push('/profile/EditProfile')}>Edit Profile</Text>
+        <TouchableOpacity style={styles.button} onPress={() => router.push('/profile/EditProfile')}>
+          <Text style={styles.buttonText} >Edit Profile</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={[styles.button, styles.signOutButton]} onPress={handleSignOut}>
-          <Text style={styles.buttonText}>Sign Out</Text>
+          <SignOutButton />
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

@@ -1,29 +1,50 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { ThemeProvider as NavigationThemeProvider, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Redirect, Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
-
+import { ClerkProvider, SignedIn, SignedOut, useAuth } from '@clerk/clerk-expo';
+import { tokenCache } from '@clerk/clerk-expo/token-cache';
+import { Slot } from 'expo-router';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { useEffect } from 'react';
+import { Platform } from 'react-native';
+import * as NavigationBar from "expo-navigation-bar";
+import InitialLayout from "@/components/initialLayout";
+import { useEnsureUserInSupabase } from '@/hooks/useEnsureUserInSupabase';
+import EnsureSupabaseUserWrapper from '@/components/EnsureUserInSupabaseWrapper';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
+
+
+  const [fontsLoaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
-  if (!loaded) {
-    // Async font loading only occurs in development.
-    return null;
-  }
+
+
+  //update the navigation bar on android
+  useEffect(() => {
+    if (Platform.OS === "android") {
+      NavigationBar.setBackgroundColorAsync('#000000');
+      NavigationBar.setButtonStyleAsync('light');
+    }
+  }, [])
+
+ 
+
+
+  if (!fontsLoaded) return null;
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style={colorScheme === 'light' ? 'dark' : 'dark'} />
-    </ThemeProvider>
+    <ClerkProvider tokenCache={tokenCache} >
+      <SafeAreaProvider>
+        <EnsureSupabaseUserWrapper />
+        <Slot/>
+        <StatusBar style={colorScheme === 'light' ? 'dark' : 'dark'} />
+      </SafeAreaProvider>
+    </ClerkProvider>
   );
 }

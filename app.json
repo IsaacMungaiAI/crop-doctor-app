@@ -2,6 +2,10 @@
   "expo": {
     "name": "crop-doctor-app",
     "slug": "crop-doctor-app",
+    "extra": {
+      "supabaseUrl": "process.env.SUPABASE_URL",
+      "supabaseAnonKey": "process.env.SUPABASE_ANON_KEY"
+    },
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/leaf.png",
@@ -33,7 +37,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true
