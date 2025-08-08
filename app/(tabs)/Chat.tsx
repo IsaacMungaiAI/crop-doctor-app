@@ -6,6 +6,7 @@ import axios from 'axios';
 import { Picker } from '@react-native-picker/picker';
 import { Image } from 'react-native';
 import getGeminiResponse from '../libs/gemini';
+import Markdown from 'react-native-markdown-display';
 
 
 type Message = {
@@ -104,7 +105,7 @@ export default function ChatScreen() {
     formData.append('model_type', modelType);
 
     try {
-      const response = await axios.post('http://192.168.0.103:8000/predict', formData, {
+      const response = await axios.post('https://crop-doctor-app-fastapi.onrender.com/predict', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -112,7 +113,7 @@ export default function ChatScreen() {
 
       const { predicted_class_name, gemini_explanation } = response.data;
       console.log(response.data)
-      setChatContext(`The crop is diagnosed with ${predicted_class_name}.`);
+      setChatContext(`The crop is diagnosed with ${predicted_class_name}. The explanation was provided to the user.  Keep chat in sync with the user so that the user can ask follow-up questions.`);
       const botMessage: Message = {
         id: Date.now() + 2,
         sender: 'bot',
@@ -196,7 +197,7 @@ export default function ChatScreen() {
                 style={{ width: 200, height: 200, borderRadius: 10, marginBottom: 5 }}
               />
             ) : null}
-            <Text style={styles.messageText}>{msg.text}</Text>
+            <Markdown style={markdownStyles}>{msg.text}</Markdown>
 
           </View>
         ))}
@@ -316,3 +317,24 @@ const styles = StyleSheet.create({
   },
 });
 
+
+export const markdownStyles = StyleSheet.create({
+  body: {
+    color: '#333',
+    fontSize: 15,
+    lineHeight: 22,
+  },
+  strong: {
+    fontWeight: 'bold',
+  },
+  em: {
+    fontStyle: 'italic',
+  },
+  bullet_list: {
+    paddingLeft: 10,
+  },
+  list_item: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+});
