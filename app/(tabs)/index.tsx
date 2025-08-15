@@ -22,8 +22,7 @@ export default function HomeScreen() {
         <TouchableOpacity
           style={styles.card}
           onPress={() => {
-            // You can add scan navigation later
-            alert('Scanning feature coming soon');
+            router.push("/(tabs)/Scan");
           }}
         >
           <Image source={require('@/assets/images/scan.png')} style={styles.icon} />
