@@ -11,8 +11,6 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useEffect } from 'react';
 import { Platform } from 'react-native';
 import * as NavigationBar from "expo-navigation-bar";
-import InitialLayout from "@/components/initialLayout";
-import { useEnsureUserInSupabase } from '@/hooks/useEnsureUserInSupabase';
 import EnsureSupabaseUserWrapper from '@/components/EnsureUserInSupabaseWrapper';
 
 export default function RootLayout() {
@@ -41,9 +39,11 @@ export default function RootLayout() {
   return (
     <ClerkProvider tokenCache={tokenCache} >
       <SafeAreaProvider>
-        <EnsureSupabaseUserWrapper />
-        <Slot/>
-        <StatusBar style={colorScheme === 'light' ? 'dark' : 'dark'} />
+        <NavigationThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <EnsureSupabaseUserWrapper />
+          <Slot/>
+          <StatusBar style={colorScheme === 'light' ? 'dark' : 'dark'} />
+        </NavigationThemeProvider>
       </SafeAreaProvider>
     </ClerkProvider>
   );
