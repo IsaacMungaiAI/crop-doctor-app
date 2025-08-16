@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -7,23 +7,30 @@ import {
     TouchableOpacity,
     Alert,
     ScrollView,
+    ActivityIndicator,
+    GestureResponderEvent,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { router, useRouter } from 'expo-router';
+import { getUserProfile, updateUserProfile, UserProfile } from '@/utils/userProfile';
+
 
 const EditProfileScreen = () => {
-    const router = useRouter();
+
 
     // Mocked user data (replace with real data/fetch)
     const [name, setName] = useState('Isaac Mungai');
     const [email, setEmail] = useState('isaac@example.com');
     const [password, setPassword] = useState('********');
+    const [loading, setLoading] = useState(true);
+    const [profile, setProfile] = useState<UserProfile | null>(null);
 
-    const handleSave = () => {
-        // TODO: Save data to Supabase or your backend
-        Alert.alert('Profile Updated', 'Your changes have been saved.');
-        router.back(); // Navigate back to profile
-    };
+
+    const router = useRouter();
+
+    function handleSave(event: GestureResponderEvent): void {
+        throw new Error('Function not implemented.');
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -56,7 +63,9 @@ const EditProfileScreen = () => {
                 />
 
                 <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-                    <Text style={styles.saveButtonText}>Save Changes</Text>
+                    <Text style={styles.saveButtonText}>
+                        {loading ? "Saving..." : "Save Changes"}
+                    </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => router.back()} style={styles.cancelButton}>

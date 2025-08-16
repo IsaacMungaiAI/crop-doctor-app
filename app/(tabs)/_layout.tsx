@@ -33,6 +33,13 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="Scan"
+        options={{
+          title: 'Scan',
+          tabBarIcon: ({ color }) => <Ionicons size={28} name="scan-outline" color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="Chat"
         options={{
           title: 'Chat',

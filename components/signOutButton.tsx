@@ -1,15 +1,15 @@
-import { useClerk } from '@clerk/clerk-expo'
+//import { useClerk } from '@clerk/clerk-expo'
 import { useRouter } from 'expo-router'
 import { Text, TouchableOpacity } from 'react-native'
 
 export const SignOutButton = () => {
   // Use `useClerk()` to access the `signOut()` function
-  const { signOut } = useClerk()
+  //const { signOut } = useClerk()
   const router = useRouter()
 
   const handleSignOut = async () => {
     try {
-      await signOut()
+      //await signOut()
       // Redirect to your desired page
       router.replace('/(auth)/login') // Adjust the path as needed
     } catch (err) {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useClerk } from '@clerk/clerk-expo';
+
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link, useRouter } from 'expo-router';
 import { SignOutButton } from '@/components/signOutButton';
@@ -9,7 +9,7 @@ import { SignOutButton } from '@/components/signOutButton';
 
 const ProfileScreen = () => {
   const router = useRouter();
-  const { signOut } = useClerk();
+
 
   // You’d normally get this from Supabase auth session
   const user = {
@@ -20,7 +20,7 @@ const ProfileScreen = () => {
 
   const handleSignOut = async () => {
     try {
-      await signOut();
+      //await signOut();
       setTimeout(() => {
         router.replace('/(auth)/login');
       }, 500); // give Clerk a moment to update its internal state

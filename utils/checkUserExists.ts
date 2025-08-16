@@ -7,7 +7,7 @@ export const checkUserExists = async (userId: string, supabaseClient: any) => {
         .from("users")
         .select("id")
         .eq("user_id", userId)
-        .maybeSingle();
+        .single();
 
     if (error || !data) {
         console.warn("User check error:", error?.message);

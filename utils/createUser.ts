@@ -6,11 +6,13 @@ export const createUser = async ({
   email,
   fullName,
   imageUrl,
+  avatarUrl
 }: {
   userId: string;
   email: string;
   fullName: string;
   imageUrl: string;
+  avatarUrl: string;
 }, supabaseClient: any) => {
   const { data, error } = await supabaseClient.from("users").insert([
     {
@@ -18,6 +20,7 @@ export const createUser = async ({
       email,
       full_name: fullName,
       image_url: imageUrl,
+      avatar_url: avatarUrl,
     },
   ]);
 
