@@ -6,32 +6,33 @@ import { supabase } from "@/lib/supabase";
 import { COLORS } from "@/constants/theme";
 import { styles } from "@/constants/auth.styles";
 
+import { useAuth, useSSO, useUser } from "@clerk/clerk-expo";
+import { ensureUserInSupabase } from "@/utils/checkUserExists";
+
 export default function Login() {
+  const { startSSOFlow } = useSSO();
   const router = useRouter();
+  const { user } = useUser();
+  const { getToken } = useAuth();
+
 
   const handleGoogleSignin = async () => {
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: "http://localhost:3000", // 👈 can be your hosted domain too
-        },
-      });
+      const { createdSessionId, setActive } = await startSSOFlow({ strategy: "oauth_google" });
 
-      if (error) {
-        console.error("Supabase OAuth error:", error);
-        Alert.alert("Login failed", error.message);
-        return;
+      if (setActive && createdSessionId) {
+        setActive({ session: createdSessionId });
+        const token = await getToken({ template: "supabase" });
+        // Ensure user exists in Supabase
+        await ensureUserInSupabase(token!, user);
+        router.push("/(tabs)")
       }
-
-      if (data?.url) {
-        // Open the OAuth provider in a browser
-        // On mobile, Supabase will automatically persist session after login
-        router.push("/(tabs)");
-      }
-    } catch (err) {
-      console.error("Unexpected OAuth error:", err);
-      Alert.alert("Error", "Something went wrong, please try again.");
+    } catch (error) {
+      console.error("Google Sign-In error:", error);
+      Alert.alert(
+        "Login failed",
+        "Google sign-in did not complete. Please try again."
+      );
     }
   };
 
@@ -80,4 +81,3 @@ export default function Login() {
     </View>
   );
 }
-
