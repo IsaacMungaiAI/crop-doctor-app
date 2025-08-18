@@ -1,23 +1,36 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link, useRouter, usePathname } from 'expo-router';
 import { supabase } from '@/lib/supabase';
+import getUserProfile from '@/utils/userProfile';
 //import { supabase } from '../services/supabase'; // assuming supabase setup
 
 const ProfileScreen = () => {
   const router = useRouter();
+  const [user,setUser]=useState<any>(null);
 
 
+
+useEffect(() => {
+    // fetch profile when screen mounts
+    const fetchProfile = async () => {
+      const profile = await getUserProfile();
+      setUser(profile);
+      console.log("Fetched profile:", profile);
+    };
+
+    fetchProfile();
+  }, []);
 
 
   // You’d normally get this from Supabase auth session
-  const user = {
+  /*const user = {
     name: 'Isaac Mungai',
     email: 'isaac@example.com',
     avatar: 'https://i.pravatar.cc/150?img=12',
-  };
+  };*/
 
   const handleSignOut = async () => {
     try {
@@ -28,13 +41,15 @@ const ProfileScreen = () => {
     }
   }
 
+  
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Image source={{ uri: user.avatar }} style={styles.avatar} />
+        <Image source={{ uri: user?.avatar }} style={styles.avatar} />
 
-        <Text style={styles.name}>{user.name}</Text>
-        <Text style={styles.email}>{user.email}</Text>
+        <Text style={styles.name}>{user?.name}</Text>
+        <Text style={styles.email}>{user?.email}</Text>
 
         <TouchableOpacity style={styles.button} onPress={() => router.push('/profile/EditProfile')}>
           <Text style={styles.buttonText} >Edit Profile</Text>
