@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Link, useRouter, usePathname } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { supabase } from '@/lib/supabase';
-import getUserProfile from '@/utils/userProfile';
+import getUserProfile from '@/utils/getUserProfile';
 //import { supabase } from '../services/supabase'; // assuming supabase setup
 
 const ProfileScreen = () => {
   const router = useRouter();
-  const [user,setUser]=useState<any>(null);
+  const [user, setUser] = useState<any>(null);
 
 
 
-useEffect(() => {
+
+  useEffect(() => {
     // fetch profile when screen mounts
     const fetchProfile = async () => {
       const profile = await getUserProfile();
@@ -24,6 +25,16 @@ useEffect(() => {
     fetchProfile();
   }, []);
 
+  // Refresh profile whenever screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      const fetchProfile = async () => {
+        const profile = await getUserProfile();
+        setUser(profile);
+      };
+      fetchProfile();
+    }, [])
+  );
 
   // You’d normally get this from Supabase auth session
   /*const user = {
@@ -41,14 +52,21 @@ useEffect(() => {
     }
   }
 
-  
+  console.log("Avatar URL in component:", user?.avatar_url);
+
+
+
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Image source={{ uri: user?.avatar }} style={styles.avatar} />
+        <Image
+          source={user?.avatar_url ? { uri: `${user.avatar_url}&dummy=${Date.now()}` }
+            : require('@/assets/images/default-avatar.png')}
+          style={styles.avatar}
+        />
 
-        <Text style={styles.name}>{user?.name}</Text>
+        <Text style={styles.name}>{user?.full_name}</Text>
         <Text style={styles.email}>{user?.email}</Text>
 
         <TouchableOpacity style={styles.button} onPress={() => router.push('/profile/EditProfile')}>

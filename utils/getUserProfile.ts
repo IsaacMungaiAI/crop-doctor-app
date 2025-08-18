@@ -15,6 +15,17 @@ export default async function getUserProfile() {
     .eq("id", user.id)
     .single();
 
+  if (profile?.avatar_url) {
+  const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+    .from("avatars")
+    .createSignedUrl(profile.avatar_url, 60 * 60); // ✅ use path directly
+
+  if (signedUrlData?.signedUrl) {
+    profile.avatar_url = signedUrlData.signedUrl; // replace with actual signed URL
+  }
+}
+  console.log("Signed Url: ", profile.avatar_url)
+
   if (profileError) {
     console.error("Error fetching profile:", profileError);
     return null;
