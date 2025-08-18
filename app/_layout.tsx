@@ -1,6 +1,6 @@
 import { ThemeProvider as NavigationThemeProvider, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Redirect, Stack, useRouter, useSegments } from 'expo-router';
+import { Redirect, Stack, usePathname, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { Slot } from 'expo-router';
@@ -17,7 +17,9 @@ export default function RootLayout() {
   const [session, setSession] = useState<Session | null>(null);
   const [isNewUser, setIsNewUser] = useState<boolean>(false);
   const [checkingAuth, setCheckingAuth] = useState<boolean>(true);
+
   const router = useRouter();
+  const pathname = usePathname();
 
   const [fontsLoaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
@@ -51,10 +53,10 @@ export default function RootLayout() {
       if (session && session.user) {
         router.replace('/(tabs)')
       } else if (isNewUser) {
-        router.replace('/signup')
-      } else {
-        router.replace('/signin')
-      }
+        router.replace('/(auth)/signup')
+      } else
+        router.replace('/(auth)/signin')
+
     }
   }, [checkingAuth, session, isNewUser])
 
@@ -77,7 +79,7 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <NavigationThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Slot />
-        <StatusBar style={colorScheme === 'dark' ? 'dark' : 'dark'} />
+        <StatusBar style={colorScheme === 'light' ? 'dark' : 'dark'} />
       </NavigationThemeProvider>
     </SafeAreaProvider>
   );

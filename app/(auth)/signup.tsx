@@ -27,7 +27,8 @@ export default function SignUp() {
     if (error) Alert.alert("Error", error.message);
     if (!session) {
       Alert.alert("Success", "Please check your inbox for email verification!");
-      router.replace("/signin");
+      router.replace("/(auth)/signin");
+
     }
     setLoading(false);
   }

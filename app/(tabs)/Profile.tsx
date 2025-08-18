@@ -1,14 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Link, useRouter } from 'expo-router';
-import { SignOutButton } from '@/components/signOutButton';
+import { Link, useRouter, usePathname } from 'expo-router';
+import { supabase } from '@/lib/supabase';
 //import { supabase } from '../services/supabase'; // assuming supabase setup
 
 const ProfileScreen = () => {
   const router = useRouter();
+
+
 
 
   // You’d normally get this from Supabase auth session
@@ -20,14 +21,12 @@ const ProfileScreen = () => {
 
   const handleSignOut = async () => {
     try {
-      //await signOut();
-      setTimeout(() => {
-        router.replace('/(auth)/login');
-      }, 500); // give Clerk a moment to update its internal state
-    } catch (error) {
-      console.error("Sign out error", error);
+      await supabase.auth.signOut()
+      //router.replace('/(auth)/signin') // Adjust the path as needed
+    } catch (err) {
+      console.error(JSON.stringify(err, null, 2))
     }
-  };
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -42,7 +41,7 @@ const ProfileScreen = () => {
         </TouchableOpacity>
 
         <TouchableOpacity style={[styles.button, styles.signOutButton]} onPress={handleSignOut}>
-          <SignOutButton />
+          <Text>Sign out</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

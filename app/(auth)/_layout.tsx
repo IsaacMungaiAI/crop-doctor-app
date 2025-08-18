@@ -3,11 +3,12 @@ import React from 'react'
 
 
 export default function AuthRoutesLayout() {
-  const[isSignedIn, setIsSignedIn] = React.useState(false)
 
-  if (isSignedIn) {
-    return <Redirect href={'/'} />
-  }
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false, // optional, hides headers for auth screens
+      }} />
+  )
 
-  return <Stack />
 }
