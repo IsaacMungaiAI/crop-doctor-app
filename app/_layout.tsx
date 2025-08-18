@@ -7,16 +7,16 @@ import { Slot } from 'expo-router';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useEffect, useState } from 'react';
-import { Platform, View } from 'react-native';
+import { Platform } from 'react-native';
 import * as NavigationBar from "expo-navigation-bar";
 import { supabase } from '@/lib/supabase';
-import Auth from '@/components/Auth';
 import { Session } from '@supabase/supabase-js';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [session, setSession] = useState<Session | null>(null);
   const [isNewUser, setIsNewUser] = useState<boolean>(false);
+  const [checkingAuth, setCheckingAuth] = useState<boolean>(true);
   const router = useRouter();
 
   const [fontsLoaded] = useFonts({
@@ -30,6 +30,7 @@ export default function RootLayout() {
       if (session?.user?.user_metadata?.isNewUser) {
         setIsNewUser(true);
       }
+      setCheckingAuth(false);
     };
 
     initSession();
@@ -44,6 +45,19 @@ export default function RootLayout() {
     return () => subscription.unsubscribe();
   }, []);
 
+
+  useEffect(() => {
+    if (!checkingAuth) {
+      if (session && session.user) {
+        router.replace('/(tabs)')
+      } else if (isNewUser) {
+        router.replace('/signup')
+      } else {
+        router.replace('/signin')
+      }
+    }
+  }, [checkingAuth, session, isNewUser])
+
   useEffect(() => {
     const setupAndroidNavBar = async () => {
       if (Platform.OS === "android") {
@@ -55,17 +69,15 @@ export default function RootLayout() {
     setupAndroidNavBar();
   }, []);
 
-  if (!fontsLoaded) return null;
+  if (!fontsLoaded || checkingAuth) return null;
 
-  // Determine the redirect path outside of the render to avoid infinite loops
-  const redirectPath = session && session.user ? "/" : (isNewUser ? "/signup" : "/signin");
+
 
   return (
     <SafeAreaProvider>
       <NavigationThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Redirect href='/(tabs)' />
-        {session && session.user ? <Slot /> : <Auth />}
-        <StatusBar style={colorScheme === 'light' ? 'dark' : 'light'} />
+        <Slot />
+        <StatusBar style={colorScheme === 'dark' ? 'dark' : 'dark'} />
       </NavigationThemeProvider>
     </SafeAreaProvider>
   );
