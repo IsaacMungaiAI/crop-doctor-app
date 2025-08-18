@@ -27,7 +27,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     const initSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await supabase.auth.refreshSession();
       setSession(session);
       if (session?.user?.user_metadata?.isNewUser) {
         setIsNewUser(true);
@@ -79,7 +79,7 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <NavigationThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Slot />
-        <StatusBar style={colorScheme === 'light' ? 'dark' : 'dark'} />
+        <StatusBar style={colorScheme === 'dark' ? 'dark' : 'dark'} />
       </NavigationThemeProvider>
     </SafeAreaProvider>
   );

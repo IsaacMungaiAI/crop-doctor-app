@@ -33,6 +33,8 @@ export default function SignUp() {
     setLoading(false);
   }
 
+
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Create Account</Text>
