@@ -12,7 +12,7 @@ import {
 import type { CameraView as CameraViewType } from "expo-camera";
 
 export default function App() {
-  const [facing, setFacing] = useState<CameraType>("back");
+  {/* const [facing, setFacing] = useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
   const [loading, setLoading] = useState(false);
   const [prediction, setPrediction] = useState<string | null>(null);
@@ -30,7 +30,7 @@ export default function App() {
 
   const takePicture = async (model_type: string) => {
     if (!cameraRef.current) return;
-    
+
     try {
       setLoading(true);
       const photo = await cameraRef.current.takePictureAsync({
@@ -84,11 +84,14 @@ export default function App() {
 
   const toggleCameraFacing = () => {
     setFacing((current) => (current === "back" ? "front" : "back"));
-  };
+  };*/}
+
 
   return (
     <View style={styles.container}>
-      <CameraView
+      <Text style={{fontSize: 24, fontWeight: "bold", color: "white"}}>Coming soon!</Text>
+
+      {/* <CameraView
         ref={cameraRef}
         style={styles.camera}
         facing={facing}
@@ -113,7 +116,8 @@ export default function App() {
         <Text style={{ color: "#fff", position: "absolute", bottom: 10 }}>
           Prediction: {prediction}
         </Text>
-      )}
+      )}*/}
+
     </View>
   );
 }
