@@ -60,11 +60,9 @@ const ProfileScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Image
-          source={user?.avatar_url ? { uri: `${user.avatar_url}&dummy=${Date.now()}` }
-            : require('@/assets/images/default-avatar.png')}
-          style={styles.avatar}
-        />
+        <Image source={{ uri: user?.avatar_url }} style={styles.avatar} />
+
+
 
         <Text style={styles.name}>{user?.full_name}</Text>
         <Text style={styles.email}>{user?.email}</Text>

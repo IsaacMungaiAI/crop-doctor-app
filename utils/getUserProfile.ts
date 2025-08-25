@@ -24,6 +24,8 @@ export default async function getUserProfile() {
     profile.avatar_url = signedUrlData.signedUrl; // replace with actual signed URL
   }
 }
+
+
   console.log("Signed Url: ", profile.avatar_url)
 
   if (profileError) {

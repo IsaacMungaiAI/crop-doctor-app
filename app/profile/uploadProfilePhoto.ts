@@ -2,9 +2,9 @@ import * as ImagePicker from "expo-image-picker";
 import { supabase } from "@/lib/supabase";
 
 export async function pickAndUploadProfilePhoto(userId: string) {
-  // Step 1: Pick image
+  // Pick image
   const result = await ImagePicker.launchImageLibraryAsync({
-    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    mediaTypes: ['images'],
     allowsEditing: true,
     aspect: [1, 1],
     quality: 0.7,
@@ -14,26 +14,32 @@ export async function pickAndUploadProfilePhoto(userId: string) {
 
   const file = result.assets[0];
   const fileExt = file.uri.split(".").pop();
-  const filePath = `${userId}.${fileExt}`; // ✅ just the file path
+  const filePath = `${userId}.${fileExt}`;
 
-  // Step 2: Upload to Supabase Storage
+  // ✅ Create FormData for RN upload
+  const formData = new FormData();
+  formData.append("file", {
+    uri: file.uri,
+    name: filePath,
+    type: `image/${fileExt}`,
+  } as any);
+
+  // Upload to Supabase
   const { error: uploadError } = await supabase.storage
     .from("avatars")
-    .upload(filePath, {
-      uri: file.uri,
-      type: "image/*",
-      name: filePath,
-    } as any, { upsert: true });
+    .upload(filePath, formData, {
+      upsert: true,
+    });
 
   if (uploadError) {
     console.error("Upload error:", uploadError.message);
     throw uploadError;
   }
 
-  // Step 3: Update profile row with file path (NOT full URL)
+  // Update profile row in DB
   const { error: updateError } = await supabase
     .from("profiles")
-    .update({ avatar_url: filePath }) // ✅ store only path
+    .update({ avatar_url: filePath })
     .eq("id", userId);
 
   if (updateError) {
@@ -41,5 +47,6 @@ export async function pickAndUploadProfilePhoto(userId: string) {
     throw updateError;
   }
 
-  return filePath; // return path, not full URL
+  return filePath;
 }
+
