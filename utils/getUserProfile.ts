@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase";
+import {UserProfile} from "@/types/UserProfile"
 
-export default async function getUserProfile() {
+export default async function getUserProfile(): Promise<UserProfile> {
   const { data: { user }, error: userError } = await supabase.auth.getUser();
   if (userError) {
     throw userError;
@@ -30,7 +31,7 @@ export default async function getUserProfile() {
 
   if (profileError) {
     console.error("Error fetching profile:", profileError);
-    return null;
+    throw profileError;
   }
 
   return profile;

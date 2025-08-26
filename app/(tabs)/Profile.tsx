@@ -5,36 +5,23 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { supabase } from '@/lib/supabase';
 import getUserProfile from '@/utils/getUserProfile';
-//import { supabase } from '../services/supabase'; // assuming supabase setup
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { UserProfile } from '@/types/UserProfile';   
+
 
 const ProfileScreen = () => {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const queryClient = useQueryClient();
 
 
+  const { data: user, isLoading, isError, refetch } = useQuery<UserProfile>({
+    queryKey: ['userProfile'],
+    queryFn: getUserProfile,
+    staleTime: 1000 * 60 * 5, //5min before considering stale
+    //cacheTime: 1000 * 60 * 30, //stays in cache for 30min
+  })
 
 
-  useEffect(() => {
-    // fetch profile when screen mounts
-    const fetchProfile = async () => {
-      const profile = await getUserProfile();
-      setUser(profile);
-      console.log("Fetched profile:", profile);
-    };
-
-    fetchProfile();
-  }, []);
-
-  // Refresh profile whenever screen is focused
-  useFocusEffect(
-    useCallback(() => {
-      const fetchProfile = async () => {
-        const profile = await getUserProfile();
-        setUser(profile);
-      };
-      fetchProfile();
-    }, [])
-  );
 
   // You’d normally get this from Supabase auth session
   /*const user = {
@@ -46,13 +33,34 @@ const ProfileScreen = () => {
   const handleSignOut = async () => {
     try {
       await supabase.auth.signOut()
+      queryClient.removeQueries({ queryKey: ['userProfile'] })
       //router.replace('/(auth)/signin') // Adjust the path as needed
     } catch (err) {
       console.error(JSON.stringify(err, null, 2))
     }
+  };
+
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text>Loading profile...</Text>
+      </SafeAreaView>
+    );
   }
 
-  console.log("Avatar URL in component:", user?.avatar_url);
+  if (isError) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text>Error fetching profile</Text>
+        <TouchableOpacity onPress={() => refetch()}>
+          <Text>Try Again</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
+
+
+  
 
 
 
@@ -60,7 +68,7 @@ const ProfileScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Image source={{ uri: user?.avatar_url }} style={styles.avatar} />
+        <Image source={{ uri: user?.avatar_url || 'https://i.pravatar.cc/150?img=12' }} style={styles.avatar} />
 
 
 

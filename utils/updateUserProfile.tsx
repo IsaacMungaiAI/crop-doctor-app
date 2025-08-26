@@ -1,12 +1,11 @@
 import { supabase } from "@/lib/supabase"
 
 
-type UserProfile = {
+export type UserProfile = {
     full_name: string,
     email: string,
     password: string,
     avatar_url: string,
-
 }
 
 export default async function updateUserProfile(updates: UserProfile) {
