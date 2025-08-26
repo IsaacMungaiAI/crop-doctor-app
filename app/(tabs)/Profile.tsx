@@ -1,12 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { supabase } from '@/lib/supabase';
 import getUserProfile from '@/utils/getUserProfile';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { UserProfile } from '@/types/UserProfile';   
+import { UserProfile } from '@/types/UserProfile';
+import { loader } from '../styles/Loader';
+
 
 
 const ProfileScreen = () => {
@@ -42,8 +44,11 @@ const ProfileScreen = () => {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={styles.container}>
-        <Text>Loading profile...</Text>
+      <SafeAreaView style={loader.container}>
+        <View style={loader.loaderWrapper}>
+          <ActivityIndicator size="large" color="#4CAF50" />
+          <Text style={loader.loaderText}>Loading profile...</Text>
+        </View>
       </SafeAreaView>
     );
   }
@@ -60,7 +65,7 @@ const ProfileScreen = () => {
   }
 
 
-  
+
 
 
 

@@ -44,7 +44,7 @@ const EditProfileScreen = () => {
             if (profile) {
                 setFullName(profile.full_name || '');
                 setEmail(profile.email || '');
-                setAvatarUrl(profile.avatar_url || null);
+                setAvatarUrl(profile.avatar_url || '');
             }
         })();
     }, []);
