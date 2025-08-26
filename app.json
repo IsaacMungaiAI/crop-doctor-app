@@ -4,7 +4,11 @@
     "slug": "crop-doctor-app",
     "extra": {
       "supabaseUrl": "process.env.SUPABASE_URL",
-      "supabaseAnonKey": "process.env.SUPABASE_ANON_KEY"
+      "supabaseAnonKey": "process.env.SUPABASE_ANON_KEY",
+      "router": {},
+      "eas": {
+        "projectId": "d567b0ed-db09-491f-bf7a-289e76c33361"
+      }
     },
     "version": "1.0.0",
     "orientation": "portrait",
@@ -20,7 +24,8 @@
         "foregroundImage": "./assets/images/leaf.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.isaacmungai.cropdoctorapp"
     },
     "web": {
       "bundler": "metro",
