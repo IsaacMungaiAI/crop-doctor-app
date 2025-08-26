@@ -12,7 +12,7 @@ import {
 import type { CameraView as CameraViewType } from "expo-camera";
 
 export default function App() {
-  {/* const [facing, setFacing] = useState<CameraType>("back");
+  const [facing, setFacing] = useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
   const [loading, setLoading] = useState(false);
   const [prediction, setPrediction] = useState<string | null>(null);
@@ -39,7 +39,7 @@ export default function App() {
       });
 
       const formData = new FormData();
-      formData.append("photo", {
+      formData.append("file", {
         uri: photo.uri,
         name: "photo.jpg",
         type: "image/jpeg",
@@ -59,13 +59,25 @@ export default function App() {
         throw new Error(text || `HTTP ${res.status}`);
       }
       const data = await res.json();
-      setPrediction(data.prediction);
+      console.log("Prediction: ", data);
+      setPrediction(data.predicted_class_name);
+      // If you want to also keep the explanation:
+      router.push({
+        pathname: "/Chat",   // adjust to your actual chat screen route
+        params: {
+          prediction: data.predicted_class_name,
+          explanation: data.gemini_explanation,
+        },
+      });
     } catch (error) {
       console.error("Scan failed!", error);
     } finally {
       setLoading(false);
     }
+
   };
+
+
 
   if (!permission) {
     return <View />;
@@ -84,25 +96,26 @@ export default function App() {
 
   const toggleCameraFacing = () => {
     setFacing((current) => (current === "back" ? "front" : "back"));
-  };*/}
+  };
 
 
   return (
     <View style={styles.container}>
-      <Text style={{fontSize: 24, fontWeight: "bold", color: "white"}}>Coming soon!</Text>
 
-      {/* <CameraView
+
+      <CameraView
         ref={cameraRef}
         style={styles.camera}
         facing={facing}
         onCameraReady={handleCameraReady}
-      >
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-            <Text style={styles.text}>Flip Camera</Text>
-          </TouchableOpacity>
-        </View>
-      </CameraView>
+      />
+
+      <View style={[styles.buttonContainer, { position: "absolute", bottom: 20 }]}>
+        <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
+          <Text style={styles.text}>Flip Camera</Text>
+        </TouchableOpacity>
+      </View>
+
 
       {loading && (
         <ActivityIndicator
@@ -116,7 +129,7 @@ export default function App() {
         <Text style={{ color: "#fff", position: "absolute", bottom: 10 }}>
           Prediction: {prediction}
         </Text>
-      )}*/}
+      )}
 
     </View>
   );

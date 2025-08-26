@@ -8,6 +8,7 @@ import getGeminiResponse from '../libs/gemini';
 import Markdown from 'react-native-markdown-display';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
+import { useLocalSearchParams } from "expo-router";
 
 type Message = {
   id: number;
@@ -24,6 +25,8 @@ type ChatSession = {
 };
 
 export default function ChatScreen({ route }: any) {
+  const { prediction, explanation } = useLocalSearchParams();
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -35,7 +38,7 @@ export default function ChatScreen({ route }: any) {
   // Sessions state
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [sessionId, setSessionId] = useState(route?.params?.sessionId || '');
-  const [viewMode, setViewMode] = useState<'list' | 'chat'>('list');
+  const [viewMode, setViewMode] = useState<'list' | 'chat'>(prediction && explanation ? 'chat' : 'list');
 
   const STORAGE_KEY = sessionId ? `chat_session_${sessionId}` : '';
 
@@ -100,6 +103,44 @@ export default function ChatScreen({ route }: any) {
     };
     saveMessages();
   }, [messages]);
+
+  useEffect(() => {
+  if (prediction && explanation) {
+    const newId = `session_${Date.now()}`;
+    setSessionId(newId);
+    setViewMode("chat");
+
+    const initialBotMessage: Message = {
+      id: Date.now(),
+      sender: "bot",
+      text: `🌿 Disease: ${prediction}\n\n🌱 Description and Prevention:\n${explanation}`,
+    };
+
+    // update state
+    setMessages([initialBotMessage]);
+    setChatContext(`The crop is diagnosed with ${prediction}.`);
+
+    // 🔑 immediately persist session + messages
+    const saveInitial = async () => {
+      const key = `chat_session_${newId}`;
+      await AsyncStorage.setItem(key, JSON.stringify([initialBotMessage]));
+
+      const newSession: ChatSession = {
+        id: newId,
+        title: `Chat ${sessions.length + 1}`,
+        lastMessage: initialBotMessage.text,
+        timestamp: Date.now(),
+      };
+
+      const updatedSessions = [...sessions, newSession];
+      setSessions(updatedSessions);
+      await AsyncStorage.setItem("chat_sessions_list", JSON.stringify(updatedSessions));
+    };
+    saveInitial();
+  }
+}, [prediction, explanation]);
+
+
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -197,25 +238,25 @@ export default function ChatScreen({ route }: any) {
   }, [messages, isTyping]);
 
   const loadSessions = async () => {
-  const keys = await AsyncStorage.getAllKeys();
-  const chatKeys = keys.filter((k) => k.startsWith("chat_session_"));
-  const data: ChatSession[] = [];
+    const keys = await AsyncStorage.getAllKeys();
+    const chatKeys = keys.filter((k) => k.startsWith("chat_session_"));
+    const data: ChatSession[] = [];
 
-  for (const key of chatKeys) {
-    const stored = await AsyncStorage.getItem(key);
-    const messages: Message[] = stored ? JSON.parse(stored) : [];
-    const lastMessage = messages.length ? messages[messages.length - 1].text : "No messages yet";
+    for (const key of chatKeys) {
+      const stored = await AsyncStorage.getItem(key);
+      const messages: Message[] = stored ? JSON.parse(stored) : [];
+      const lastMessage = messages.length ? messages[messages.length - 1].text : "No messages yet";
 
-    data.push({
-      id: key.replace("chat_session_", ""),
-      title: `Chat ${data.length + 1}`, // ✅ placeholder title
-      lastMessage,
-      timestamp: messages.length ? messages[messages.length - 1].id : Date.now(), // ✅ fallback
-    });
-  }
+      data.push({
+        id: key.replace("chat_session_", ""),
+        title: `Chat ${data.length + 1}`, // ✅ placeholder title
+        lastMessage,
+        timestamp: messages.length ? messages[messages.length - 1].id : Date.now(), // ✅ fallback
+      });
+    }
 
-  setSessions(data);
-};
+    setSessions(data);
+  };
 
 
   const deleteSession = async (sessionId: string) => {
