@@ -16,7 +16,7 @@ import updateUserProfile from '@/utils/updateUserProfile';
 import getUserProfile from '@/utils/getUserProfile';
 import { supabase } from '@/lib/supabase';
 import { pickAndUploadProfilePhoto } from './uploadProfilePhoto';
-import {Image} from 'react-native';
+import { Image } from 'react-native';
 //import { getUserProfile, updateUserProfile, UserProfile } from '@/utils/getUserProfile';
 
 
@@ -88,7 +88,7 @@ const EditProfileScreen = () => {
 
                 <TouchableOpacity onPress={handlePickPhoto} style={{ alignSelf: "center", marginBottom: 20 }}>
                     {avatarUrl ? (
-                        <Image 
+                        <Image
                             source={{ uri: avatarUrl }}
                             style={{ width: 100, height: 100, borderRadius: 50 }}
                         />
