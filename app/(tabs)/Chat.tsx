@@ -105,40 +105,40 @@ export default function ChatScreen({ route }: any) {
   }, [messages]);
 
   useEffect(() => {
-  if (prediction && explanation) {
-    const newId = `session_${Date.now()}`;
-    setSessionId(newId);
-    setViewMode("chat");
+    if (prediction && explanation) {
+      const newId = `session_${Date.now()}`;
+      setSessionId(newId);
+      setViewMode("chat");
 
-    const initialBotMessage: Message = {
-      id: Date.now(),
-      sender: "bot",
-      text: `🌿 Disease: ${prediction}\n\n🌱 Description and Prevention:\n${explanation}`,
-    };
-
-    // update state
-    setMessages([initialBotMessage]);
-    setChatContext(`The crop is diagnosed with ${prediction}.`);
-
-    // 🔑 immediately persist session + messages
-    const saveInitial = async () => {
-      const key = `chat_session_${newId}`;
-      await AsyncStorage.setItem(key, JSON.stringify([initialBotMessage]));
-
-      const newSession: ChatSession = {
-        id: newId,
-        title: `Chat ${sessions.length + 1}`,
-        lastMessage: initialBotMessage.text,
-        timestamp: Date.now(),
+      const initialBotMessage: Message = {
+        id: Date.now(),
+        sender: "bot",
+        text: `🌿 Disease: ${prediction}\n\n🌱 Description and Prevention:\n${explanation}`,
       };
 
-      const updatedSessions = [...sessions, newSession];
-      setSessions(updatedSessions);
-      await AsyncStorage.setItem("chat_sessions_list", JSON.stringify(updatedSessions));
-    };
-    saveInitial();
-  }
-}, [prediction, explanation]);
+      // update state
+      setMessages([initialBotMessage]);
+      setChatContext(`The crop is diagnosed with ${prediction}.`);
+
+      // 🔑 immediately persist session + messages
+      const saveInitial = async () => {
+        const key = `chat_session_${newId}`;
+        await AsyncStorage.setItem(key, JSON.stringify([initialBotMessage]));
+
+        const newSession: ChatSession = {
+          id: newId,
+          title: `Chat ${sessions.length + 1}`,
+          lastMessage: initialBotMessage.text,
+          timestamp: Date.now(),
+        };
+
+        const updatedSessions = [...sessions, newSession];
+        setSessions(updatedSessions);
+        await AsyncStorage.setItem("chat_sessions_list", JSON.stringify(updatedSessions));
+      };
+      saveInitial();
+    }
+  }, [prediction, explanation]);
 
 
 
@@ -325,11 +325,8 @@ export default function ChatScreen({ route }: any) {
 
   // 🔹 Chat View
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 25}
-    >
+    <View style={styles.container}>
+
       <View style={styles.header}>
         <TouchableOpacity onPress={() => setViewMode('list')} style={{ position: 'absolute', left: 10, top: 50 }}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
@@ -360,61 +357,66 @@ export default function ChatScreen({ route }: any) {
         </View>
       </View>
 
-
-      <ScrollView
-        ref={scrollViewRef}
-        style={styles.chatContainer}
-        contentContainerStyle={{ paddingBottom: 80 }}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.container}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
       >
-        {messages.map((msg) => (
-          <View
-            key={msg.id}
-            style={[
-              styles.message,
-              msg.sender === 'user' ? styles.userMessage : styles.botMessage,
-            ]}
-          >
-            {msg.imageUri ? (
-              <Image
-                source={{ uri: msg.imageUri }}
-                style={{ width: 200, height: 200, borderRadius: 10, marginBottom: 5 }}
-              />
-            ) : null}
-            <Markdown style={markdownStyles}>{msg.text}</Markdown>
-          </View>
-        ))}
+        <ScrollView
+          ref={scrollViewRef}
+          style={styles.chatContainer}
+          contentContainerStyle={{ paddingBottom: 80 }}
+        >
+          {messages.map((msg) => (
+            <View
+              key={msg.id}
+              style={[
+                styles.message,
+                msg.sender === 'user' ? styles.userMessage : styles.botMessage,
+              ]}
+            >
+              {msg.imageUri ? (
+                <Image
+                  source={{ uri: msg.imageUri }}
+                  style={{ width: 200, height: 200, borderRadius: 10, marginBottom: 5 }}
+                />
+              ) : null}
+              <Markdown style={markdownStyles}>{msg.text}</Markdown>
+            </View>
+          ))}
 
-        {isAnalyzing && (
-          <View style={[styles.message, styles.botMessage, { flexDirection: 'row', alignItems: 'center' }]}>
-            <ActivityIndicator size="small" color="#555" style={{ marginRight: 8 }} />
-            <Text style={styles.typingText}>Analyzing image...</Text>
-          </View>
-        )}
+          {isAnalyzing && (
+            <View style={[styles.message, styles.botMessage, { flexDirection: 'row', alignItems: 'center' }]}>
+              <ActivityIndicator size="small" color="#555" style={{ marginRight: 8 }} />
+              <Text style={styles.typingText}>Analyzing image...</Text>
+            </View>
+          )}
 
-        {isTyping && (
-          <View style={[styles.message, styles.botMessage]}>
-            <ActivityIndicator size="small" color="#555" />
-            <Text style={styles.typingText}>AI is typing...</Text>
-          </View>
-        )}
-      </ScrollView>
+          {isTyping && (
+            <View style={[styles.message, styles.botMessage]}>
+              <ActivityIndicator size="small" color="#555" />
+              <Text style={styles.typingText}>AI is typing...</Text>
+            </View>
+          )}
+        </ScrollView>
 
-      <View style={styles.inputContainer}>
-        <TouchableOpacity onPress={handleImageUpload} style={styles.uploadButton}>
-          <Ionicons name="image-outline" size={24} color="#4CAF50" />
-        </TouchableOpacity>
+        <View style={styles.inputContainer}>
+          <TouchableOpacity onPress={handleImageUpload} style={styles.uploadButton}>
+            <Ionicons name="image-outline" size={24} color="#4CAF50" />
+          </TouchableOpacity>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Type your crop concern..."
-          value={input}
-          onChangeText={setInput}
-        />
-        <TouchableOpacity onPress={handleSend} style={styles.sendButton}>
-          <Ionicons name="send" size={20} color="#fff" />
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+          <TextInput
+            style={styles.input}
+            placeholder="Type your crop concern..."
+            value={input}
+            onChangeText={setInput}
+          />
+          <TouchableOpacity onPress={handleSend} style={styles.sendButton}>
+            <Ionicons name="send" size={20} color="#fff" />
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 

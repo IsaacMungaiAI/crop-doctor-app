@@ -84,7 +84,9 @@ export default function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <NavigationThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <Slot />
-          <StatusBar style={colorScheme === 'light' ? 'dark' : 'light'} />
+          <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'}
+            backgroundColor={colorScheme === 'dark' ? '#000000' : '#ffffff'}
+            translucent={true} />
         </NavigationThemeProvider>
       </QueryClientProvider>
     </SafeAreaProvider>
