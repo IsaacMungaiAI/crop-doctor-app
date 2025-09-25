@@ -31,7 +31,7 @@ export default function ChatScreen({ route }: any) {
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
-  const [selectedModel, setSelectedModel] = useState<'maize' | 'bean'>('maize');
+  //const [selectedModel, setSelectedModel] = useState<'maize' | 'bean'>('maize');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [chatContext, setChatContext] = useState<string | null>(null);
 
@@ -191,10 +191,15 @@ export default function ChatScreen({ route }: any) {
       scrollViewRef.current?.scrollToEnd({ animated: true });
 
       setIsAnalyzing(true);
-      await sendToBackend(uri, selectedModel);
+      await sendToBackend(uri, /*selectedModel*/);
     }
   };
 
+  const sendToBackend=async(uri: string)=>{
+    
+  }
+  // Function to send image to backend for analysis
+   /*
   const sendToBackend = async (uri: string, modelType: string) => {
     setIsTyping(true);
     const formData = new FormData();
@@ -231,7 +236,7 @@ export default function ChatScreen({ route }: any) {
       setIsTyping(false);
       setIsAnalyzing(false);
     }
-  };
+  }; */
 
   useEffect(() => {
     scrollViewRef.current?.scrollToEnd({ animated: true });
@@ -335,7 +340,7 @@ export default function ChatScreen({ route }: any) {
       </View>
 
       {/* 🔹 Crop picker (your existing code) */}
-      <View style={{ paddingHorizontal: 16, paddingVertical: 5, backgroundColor: '#fff' }}>
+      { /*<View style={{ paddingHorizontal: 16, paddingVertical: 5, backgroundColor: '#fff' }}>
         <Text style={{ fontSize: 14, color: '#444', marginBottom: 4 }}>Select crop type:</Text>
         <View
           style={{
@@ -355,7 +360,7 @@ export default function ChatScreen({ route }: any) {
             <Picker.Item label="Bean" value="bean" />
           </Picker>
         </View>
-      </View>
+        </View>*/}
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
